@@ -1,20 +1,25 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import OrganizationDataForm from '../views/OrganizationDataForm.vue'
+import Preview from '../views/Preview.vue'
 
 Vue.use(VueRouter)
 
   const routes: Array<RouteConfig> = [
   {
     path: '/',
-    name: 'OrganizationDateForm',
-    component: OrganizationDataForm
+    redirect: '/organization-data',
   },
   {
-    path: '/about',
-    name: 'About',
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
+    path: '/organization-data',
+    name: 'OrganizationDateForm',
+    component: OrganizationDataForm,
+  },
+  {
+    path: '/preview/:data',
+    name: 'Preview',
+    component: Preview,
+  },
 ]
 
 const router = new VueRouter({

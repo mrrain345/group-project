@@ -1,5 +1,7 @@
 <template>
   <div class="container">
+    <Navbar />
+
     <div class="form-group row">
       <label for="classDate" class="col-sm-12 col-form-label">Data zajęć wg organizacji roku akademickiego</label>
       <div class="col-sm-12">
@@ -9,15 +11,15 @@
 
     <br/>
     
-    <div class="form-group row">
+    <div class="row">
       <label class="col-sm-12 col-form-label">Członkowie grupy i ich funkcje</label>
 
       <div class="col-sm-12 row">
         <div class="col-sm-6">
-          Imie i nazwisko
+          <b>Imie i nazwisko</b>
         </div>
         <div class="col-sm-6">
-          Funkcje pełnione w grupie (max. 2)
+          <b>Funkcje pełnione w grupie (max. 2)</b>
         </div>
       </div>
 
@@ -26,10 +28,10 @@
           <input type="text" class="form-control" id="id" v-model="student.fullname" />
         </div>
         <div class="col-sm-3">
-          <input type="text" class="form-control" id="id" v-model="data.job1" />
+          <input type="text" class="form-control" id="id" v-model="student.job1" />
         </div>
         <div class="col-sm-3">
-          <input type="text" class="form-control" id="id" v-model="data.job2" />
+          <input type="text" class="form-control" id="id" v-model="student.job2" />
         </div>
       </div>
     </div>
@@ -73,7 +75,7 @@
 
     <br/>
 
-    <button class="btn btn-primary float-right">
+    <button class="btn btn-primary float-right" @click="generate">
       Generuj PDF
     </button>
 
@@ -81,18 +83,35 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import Navbar from '@/components/Navbar.vue';
 import OrganizationData from '@/classes/OrganizationData';
+import { FormData } from '@/classes/Field';
 
-
+@Component({
+  components: {
+    Navbar
+  }
+})
 export default class OrganizationDataForm extends Vue {
   data = new OrganizationData();
+
+  @Watch('data', { deep: true })
+  onchange() {
+    const student = this.data.students[this.data.students.length-1];
+    if (student.fullname !== "" || student.job1 !== "" || student.job2 !== "") {
+      this.data.students.push({ fullname: "", job1: "", job2: "" });
+    }
+  }
 
   constructor() {
     super();
     this.data.students.push({ fullname: "", job1: "", job2: "" });
-    this.data.students.push({ fullname: "", job1: "", job2: "" });
-    this.data.students.push({ fullname: "", job1: "", job2: "" });
+  }
+
+  generate() {
+    const base = FormData.toBaseString(this.data);
+    window.open(`/preview/${base}`);
   }
 }
 
