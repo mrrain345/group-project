@@ -3,7 +3,7 @@
     <Navbar />
 
     <div class="form-group row">
-      <label for="classDate" class="col-sm-12 col-form-label">Data zajęć wg organizacji roku akademickiego</label>
+      <label for="classDate" class="col-sm-12 col-form-label">{{ title('classDate') }}</label>
       <div class="col-sm-12">
         <input type="date" class="form-control" id="classDate" v-model="data.classDate" />
       </div>
@@ -12,7 +12,7 @@
     <br/>
     
     <div class="row">
-      <label class="col-sm-12 col-form-label">Członkowie grupy i ich funkcje</label>
+      <label class="col-sm-12 col-form-label">{{ title('students') }}</label>
 
       <div class="col-sm-12 row">
         <div class="col-sm-6">
@@ -39,14 +39,14 @@
     <br/>
 
     <div class="form-group row">
-      <label for="skills" class="col-sm-12 col-form-label">Wykaz/opis umiejętności potrzebnych do realizacji projektu</label>
+      <label for="skills" class="col-sm-12 col-form-label">{{ title('skills') }}</label>
       <div class="col-sm-12">
         <input type="text" class="form-control" id="skills" v-model="data.skills" />
       </div>
     </div>
 
     <div class="form-group row">
-      <label for="groupName" class="col-sm-12 col-form-label">Nazwa grupy projektowej</label>
+      <label for="groupName" class="col-sm-12 col-form-label">{{ title('groupName') }}</label>
       <div class="col-sm-12">
         <input type="text" class="form-control" id="groupName" v-model="data.groupName" />
       </div>
@@ -60,14 +60,14 @@
     </div>
 
     <div class="form-group row">
-      <label for="classNumber" class="col-sm-12 col-form-label">Nr grupy dziekańskiej</label>
+      <label for="classNumber" class="col-sm-12 col-form-label">{{ title('classNumber') }}</label>
       <div class="col-sm-12">
         <input type="text" class="form-control" id="classNumber" v-model="data.classNumber" />
       </div>
     </div>
 
     <div class="form-group row">
-      <label for="subject" class="col-sm-12 col-form-label">Temat projektu</label>
+      <label for="subject" class="col-sm-12 col-form-label">{{ title('subject') }}</label>
       <div class="col-sm-12">
         <input type="text" class="form-control" id="subject" v-model="data.subject" />
       </div>
@@ -90,7 +90,7 @@ import { FormData } from '@/classes/Field';
 
 @Component({
   components: {
-    Navbar
+    Navbar,
   }
 })
 export default class OrganizationDataForm extends Vue {
@@ -112,6 +112,10 @@ export default class OrganizationDataForm extends Vue {
   generate() {
     const base = FormData.toBaseString(this.data);
     window.open(`/preview/${base}`);
+  }
+
+  title(fieldName: string) : string {
+    return FormData.getTitle(fieldName);
   }
 }
 
