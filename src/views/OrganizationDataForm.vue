@@ -3,14 +3,41 @@
     <Navbar />
 
     <div class="form-group row">
+      <label for="classNumber" class="col-sm-12 col-form-label">{{ title('classNumber') }}</label>
+      <div class="col-sm-12">
+        <input type="text" class="form-control" id="classNumber" v-model="data.classNumber" />
+      </div>
+    </div>
+
+    <div class="form-group row">
       <label for="classDate" class="col-sm-12 col-form-label">{{ title('classDate') }}</label>
       <div class="col-sm-12">
         <input type="date" class="form-control" id="classDate" v-model="data.classDate" />
       </div>
     </div>
 
+    <div class="form-group row">
+      <label for="groupName" class="col-sm-12 col-form-label">{{ title('groupName') }}</label>
+      <div class="col-sm-12">
+        <input type="text" class="form-control" id="groupName" v-model="data.groupName" />
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="subject" class="col-sm-12 col-form-label">{{ title('subject') }}</label>
+      <div class="col-sm-12">
+        <input type="text" class="form-control" id="subject" v-model="data.subject" />
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="skills" class="col-sm-12 col-form-label">{{ title('skills') }}</label>
+      <div class="col-sm-12">
+        <input type="text" class="form-control" id="skills" v-model="data.skills" />
+      </div>
+    </div>
+
     <br/>
-    
     <div class="row">
       <label class="col-sm-12 col-form-label">{{ title('students') }}</label>
 
@@ -35,22 +62,7 @@
         </div>
       </div>
     </div>
-
     <br/>
-
-    <div class="form-group row">
-      <label for="skills" class="col-sm-12 col-form-label">{{ title('skills') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="skills" v-model="data.skills" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="groupName" class="col-sm-12 col-form-label">{{ title('groupName') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="groupName" v-model="data.groupName" />
-      </div>
-    </div>
 
     <div class="form-group row">
       <label for="email" class="col-sm-12 col-form-label">Dane kontaktowe - email</label>
@@ -59,23 +71,9 @@
       </div>
     </div>
 
-    <div class="form-group row">
-      <label for="classNumber" class="col-sm-12 col-form-label">{{ title('classNumber') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="classNumber" v-model="data.classNumber" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="subject" class="col-sm-12 col-form-label">{{ title('subject') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="subject" v-model="data.subject" />
-      </div>
-    </div>
-
     <br/>
 
-    <button class="btn btn-primary float-right" @click="generate">
+    <button class="btn btn-primary float-right" style="margin-bottom: 40px;" @click="generate">
       Generuj PDF
     </button>
 
@@ -115,7 +113,7 @@ export default class OrganizationDataForm extends Vue {
   }
 
   title(fieldName: string) : string {
-    return FormData.getTitle(fieldName);
+    return FormData.getTitle(this.data, fieldName);
   }
 }
 

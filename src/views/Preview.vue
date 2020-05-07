@@ -92,9 +92,10 @@ export default class Preview extends Vue{
   data: FieldDataValue[] = [];
 
   created() {
-    console.log('lel');
     const data = this.$route.params.data;
     this.data = JSON.parse(decodeURIComponent(window.atob(data)));
+
+    window.setTimeout(() => window.print(), 100);
   }
 
   fieldType(item: FieldDataValue, type: keyof typeof FieldType) {
@@ -110,13 +111,14 @@ export default class Preview extends Vue{
   }
 
   getStudents(value: Student[]) : Student[] {
+    if (value == undefined) return [];
     let students = [...value];
     students.splice(students.length-1);
     return students;
   }
 
   printDate(value: string) {
-    return value.split('-').reverse().join('/');
+    return value?.split('-').reverse()?.join('/');
   }
 }
 </script>

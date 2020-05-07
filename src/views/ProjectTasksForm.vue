@@ -60,7 +60,7 @@
 
     <br/>
 
-    <button class="btn btn-primary float-right" @click="generate">
+    <button class="btn btn-primary float-right" style="margin-bottom: 40px;" @click="generate">
       Generuj PDF
     </button>
 
@@ -88,7 +88,7 @@ export default class ProjectTasksForm extends Vue {
   }
 
   title(fieldName: string) : string {
-    return FormData.getTitle(fieldName);
+    return FormData.getTitle(this.data, fieldName);
   }
 }
 
