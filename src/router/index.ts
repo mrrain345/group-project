@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import OrganizationDataForm from '../views/OrganizationDataForm.vue'
 import ProjectTasksForm from '../views/ProjectTasksForm.vue'
+import TeamScheduleForm from '../views/TeamScheduleForm.vue'
 import Preview from '../views/Preview.vue'
 
 Vue.use(VueRouter)
@@ -20,6 +21,11 @@ Vue.use(VueRouter)
     path: '/project-tasks',
     name: 'projectTasksForm',
     component: ProjectTasksForm,
+  },
+  {
+    path: '/project-schedule',
+    name: 'teamScheduleForm',
+    component: TeamScheduleForm,
   },
   {
     path: '/preview/:data',

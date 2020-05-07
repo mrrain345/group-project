@@ -2,8 +2,8 @@
   <div class="nav container">
     <router-link to="/organization-data">Dane Organizacyjne</router-link>
     <router-link to="/project-tasks">Zadania Projektowe</router-link>
-    <router-link to="/project-shedule">Harmonogram pracy zespołu</router-link>
-    <router-link to="/personal-shedule">Harmonogram pracy własnej</router-link>
+    <router-link to="/project-schedule">Harmonogram pracy zespołu</router-link>
+    <router-link to="/personal-schedule">Harmonogram pracy własnej</router-link>
   </div> 
 </template>
 
