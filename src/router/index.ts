@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from 'vue-router'
 import OrganizationDataForm from '../views/OrganizationDataForm.vue'
 import ProjectTasksForm from '../views/ProjectTasksForm.vue'
 import TeamScheduleForm from '../views/TeamScheduleForm.vue'
+import PersonalScheduleForm from '../views/PersonalScheduleForm.vue'
 import Preview from '../views/Preview.vue'
 
 Vue.use(VueRouter)
@@ -26,6 +27,11 @@ Vue.use(VueRouter)
     path: '/project-schedule',
     name: 'teamScheduleForm',
     component: TeamScheduleForm,
+  },
+  {
+    path: '/personal-schedule',
+    name: 'personalScheduleForm',
+    component: PersonalScheduleForm,
   },
   {
     path: '/preview/:data',
