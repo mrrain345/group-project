@@ -4,18 +4,9 @@
       <div class="col-8"></div>
       <div class="col-4">
         <div v-for="(item, id) in getSection('top')" :key="id">
-          <div v-if="fieldType(item, 'text')">
-            <div class="row field">
-              <div class="col-12 title">{{ item.title }}</div>
-              <div class="col-12 value">{{ item.value }}</div>
-            </div>
-          </div>
-
-          <div v-if="fieldType(item, 'date')">
-            <div class="row field">
-              <div class="col-12 title">{{ item.title }}</div>
-              <div class="col-12 value">{{ printDate(item.value) }}</div>
-            </div>
+          <div class="row field">
+            <div class="col-12 title">{{ item.title }}</div>
+            <div class="col-12 value">{{ getValue(item) }}</div>
           </div>
         </div>
       </div>
@@ -28,7 +19,7 @@
         <div v-for="(item, id) in getSection('title')" :key="id">
           <div v-if="fieldType(item, 'text')">
             <div class="row field">
-              <div class="col-12 title">{{ item.value }}</div>
+              <div class="col-12 title">{{ getValue(item) }}</div>
             </div>
           </div>
         </div>
@@ -43,14 +34,14 @@
           <div v-if="fieldType(item, 'text')">
             <div class="row field">
               <div class="col-12 title">{{ item.title }}</div>
-              <div class="col-12 value">{{ item.value }}</div>
+              <div class="col-12 value">{{ getValue(item) }}</div>
             </div>
           </div>
 
           <div v-if="fieldType(item, 'date')">
             <div class="row field">
               <div class="col-12 title">{{ item.title }}</div>
-              <div class="col-12 value">{{ printDate(item.value) }}</div>
+              <div class="col-12 value">{{ getValue(item) }}</div>
             </div>
           </div>
 
@@ -89,25 +80,33 @@ type Student = { fullname: string, jon1: string, job2: string };
 @Component
 export default class Preview extends Vue{
 
-  data: FieldDataValue[] = [];
+  data: any = {};
 
   created() {
     const data = this.$route.params.data;
     this.data = JSON.parse(decodeURIComponent(window.atob(data)));
 
-    window.setTimeout(() => window.print(), 100);
+    //window.setTimeout(() => window.print(), 100);
   }
 
   fieldType(item: FieldDataValue, type: keyof typeof FieldType) {
-    return item.type === FieldType[type];
+    return item.type === type;
   }
 
   sectionType(item: FieldDataValue, section: keyof typeof Section) {
-    return item.section === Section[section];
+    return item.section === section;
   }
 
   getSection(section: keyof typeof Section) {
-    return this.data.filter(d => d.section === Section[section]);
+    return this.data.fields.filter((f: any) => f.section === section);
+  }
+
+  getValue(field: any) {
+    if (field.type === "date") {
+      return this.printDate(this.data.data[field.property]);
+    } else {
+      return this.data.data[field.property];
+    }
   }
 
   getStudents(value: Student[]) : Student[] {

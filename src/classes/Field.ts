@@ -2,16 +2,18 @@ export enum FieldType {
   text,
   date,
   students,
+  table,
 }
 
 export enum Section {
   top,
   title,
-  main
+  main,
+  table,
 }
 
-export type FieldData = { title: string, section: Section, type: FieldType, property: string };
-export type FieldDataValue = { title: string, section: Section, type: FieldType, property: string, value: object };
+export type FieldData = { title: string, section: keyof typeof Section, type: keyof typeof FieldType, property: string };
+export type FieldDataValue = { title: string, section: keyof typeof Section, type: keyof typeof FieldType, property: string, value: object };
 
 interface MyWindow extends Window { _fieldData: { [key: string]: FieldData[]}; }
 declare var window: MyWindow
@@ -23,7 +25,7 @@ export function Field(title: string, section: Section, type: FieldType = FieldTy
     const className = target.constructor.name;
     if (window._fieldData === undefined) window._fieldData = {};
     if (window._fieldData[className] === undefined) window._fieldData[className] = [];
-    window._fieldData[className].push({ title, section, type, property });
+    //window._fieldData[className].push({ title, section, type, property });
   }
 }
 

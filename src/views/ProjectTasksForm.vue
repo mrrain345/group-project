@@ -60,9 +60,15 @@
 
     <br/>
 
-    <button class="btn btn-primary float-right" style="margin-bottom: 40px;" @click="generate">
-      Generuj PDF
-    </button>
+    <div class="form-group row float-right">
+      <button class="btn btn-secondary" style="margin-right: 10px;" @click="addData">
+        Dodaj
+      </button>
+
+      <button class="btn btn-primary" @click="generate">
+        Generuj PDF
+      </button>
+    </div>
 
   </div>
 </template>
@@ -80,7 +86,12 @@ import { FormData } from '@/classes/Field';
 })
 export default class ProjectTasksForm extends Vue {
   data = new ProjectTasksData();
+  dataTable : Array<ProjectTasksData> = [];
 
+  addData() {
+    const data = JSON.stringify(this.data);
+    this.dataTable.push(JSON.parse(data));
+  }
 
   generate() {
     const base = FormData.toBaseString(this.data);

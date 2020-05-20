@@ -2,76 +2,26 @@
   <div class="container">
     <Navbar />
 
-    <div class="form-group row">
-      <label for="classNumber" class="col-sm-12 col-form-label">{{ title('classNumber') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="classNumber" v-model="data.classNumber" />
-      </div>
-    </div>
+    <Section section="top">
+      <Input name="classNumber" title="Nr grupy dziekańskiej" :data.sync="data"/>
+      <Input name="className" title="Nazwa przedmiotu" :data.sync="data"/>
+      <Input name="classDate" title="Data zajęć wg organizacji roku akademickiego" type="date" :data.sync="data"/>
+      <Input name="groupName" title="Nazwa grupy projektowej" :data.sync="data"/>
+    </Section>
 
-    <div class="form-group row">
-      <label for="classDate" class="col-sm-12 col-form-label">{{ title('classDate') }}</label>
-      <div class="col-sm-12">
-        <input type="date" class="form-control" id="classDate" v-model="data.classDate" />
-      </div>
-    </div>
+    <Section section="title">
+      <Input name="subject" title="Temat projektu" :data.sync="data"/>
+    </Section>
 
-    <div class="form-group row">
-      <label for="groupName" class="col-sm-12 col-form-label">{{ title('groupName') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="groupName" v-model="data.groupName" />
-      </div>
-    </div>
+    <Input name="skills" title="Wykaz/opis umiejętności potrzebnych do realizacji projektu" :data.sync="data"/>
 
-    <div class="form-group row">
-      <label for="subject" class="col-sm-12 col-form-label">{{ title('subject') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="subject" v-model="data.subject" />
-      </div>
-    </div>
+    <Table name="workers" title="Członkowie grupy i ich funkcje" :data.sync="data">
+      <Input name="firstname" title="Imię" :data.sync="data"/>
+      <Input name="lastname" title="Nazwisko" :data.sync="data"/>
+      <Input name="role" title="Rola/funkcja w zespole (max 2 funkcje dla 1 osoby)" :data.sync="data"/>
+    </Table>
 
-    <div class="form-group row">
-      <label for="skills" class="col-sm-12 col-form-label">{{ title('skills') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="skills" v-model="data.skills" />
-      </div>
-    </div>
-
-    <br/>
-    <div class="row">
-      <label class="col-sm-12 col-form-label">{{ title('students') }}</label>
-
-      <div class="col-sm-12 row">
-        <div class="col-sm-6">
-          <b>Imie i nazwisko</b>
-        </div>
-        <div class="col-sm-6">
-          <b>Funkcje pełnione w grupie (max. 2)</b>
-        </div>
-      </div>
-
-      <div v-for="(student, id) in data.students" :key="id" class="col-sm-12 row form-group">
-        <div class="col-sm-6">
-          <input type="text" class="form-control" id="id" v-model="student.fullname" />
-        </div>
-        <div class="col-sm-3">
-          <input type="text" class="form-control" id="id" v-model="student.job1" />
-        </div>
-        <div class="col-sm-3">
-          <input type="text" class="form-control" id="id" v-model="student.job2" />
-        </div>
-      </div>
-    </div>
-    <br/>
-
-    <div class="form-group row">
-      <label for="email" class="col-sm-12 col-form-label">Dane kontaktowe - email</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="email" v-model="data.email" />
-      </div>
-    </div>
-
-    <br/>
+    <Input name="email" title="Dane kontaktowe" :data.sync="data"/>
 
     <button class="btn btn-primary float-right" style="margin-bottom: 40px;" @click="generate">
       Generuj PDF
@@ -83,37 +33,24 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import Navbar from '@/components/Navbar.vue';
-import OrganizationData from '@/classes/OrganizationData';
-import { FormData } from '@/classes/Field';
+import Input from '@/components/Input.vue';
+import Table from '@/components/Table.vue';
+import Section from '@/components/Section.vue';
 
 @Component({
   components: {
     Navbar,
+    Input,
+    Table,
+    Section,
   }
 })
 export default class OrganizationDataForm extends Vue {
-  data = new OrganizationData();
-
-  @Watch('data', { deep: true })
-  onchange() {
-    const student = this.data.students[this.data.students.length-1];
-    if (student.fullname !== "" || student.job1 !== "" || student.job2 !== "") {
-      this.data.students.push({ fullname: "", job1: "", job2: "" });
-    }
-  }
-
-  constructor() {
-    super();
-    this.data.students.push({ fullname: "", job1: "", job2: "" });
-  }
+  data: any = { data: {}, fields: [] };
 
   generate() {
-    const base = FormData.toBaseString(this.data);
+    const base = btoa(encodeURIComponent(JSON.stringify(this.data)));
     window.open(`/preview/${base}`);
-  }
-
-  title(fieldName: string) : string {
-    return FormData.getTitle(this.data, fieldName);
   }
 }
 
