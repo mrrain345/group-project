@@ -20,7 +20,7 @@ export default class Table extends Vue {
   @Prop() title!: string;
   @ProvideReactive() index = 0;
   @Provide() table!: string;
-  @Provide() section = "table";
+  @Provide() section = "main";
   data: any = { data: {}, fields: [] };
   length = 1;
 
@@ -35,15 +35,20 @@ export default class Table extends Vue {
 
     this.data.fields.push({
       title: this.title,
-      section: "table",
+      section: "main",
       type: "table",
       property: this.name,
-      table: {},
+      table: [],
     });
   }
 
   increment() {
-    if (Object.entries(this.data.data[this.name][this.index]).length === 0) return;
+    if (this.index < this.length-1) {
+      this.index++;
+      return;
+    }
+
+    if (this.isEmpty()) return;
 
     this.index++;
     if (this.index === this.length) {
@@ -55,11 +60,31 @@ export default class Table extends Vue {
   decrement() {
     if (this.index == 0) return;
 
-    if (Object.entries(this.data.data[this.name][this.index]).length === 0) {
+    if (this.index < this.length-1) {
+      this.index--;
+      return;
+    }
+
+    if (this.isEmpty(true)) {
       this.data.data[this.name].pop();
       this.length--;
     }
+
     this.index--;
+  }
+
+  isEmpty(all = false) {
+    if (Object.entries(this.data.data[this.name][this.index]).length === 0) return true;
+    let empty = true;
+    for (const prop in this.data.data[this.name][this.index]) {
+      if (this.data.data[this.name][this.index][prop] !== "") {
+        if (all) return false;
+        empty = false;
+        break;
+      }
+    }
+    if (empty) return true;
+    else return false;
   }
 }
 </script>

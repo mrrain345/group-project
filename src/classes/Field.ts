@@ -1,7 +1,6 @@
 export enum FieldType {
   text,
   date,
-  students,
   table,
 }
 
@@ -9,51 +8,84 @@ export enum Section {
   top,
   title,
   main,
-  table,
 }
+
+export type OBJ = {
+  [key: string]: string | number | OBJ[]
+};
+
+export type ArrayField = {
+  property: string,
+  title: string,
+  type: keyof typeof FieldType,
+};
+
+export type Field = {
+  property: string,
+  section: keyof typeof Section,
+  title: string,
+  type: keyof typeof FieldType,
+  table: undefined | Array<ArrayField>,
+};
+
+export class Data {
+  data: OBJ = {};
+  fields: Array<Field> = [];
+};
+
+
+export function parseForm(data: any) {
+  for (const prop in data.data) {
+    if (data.data[prop] === "") {
+      return false;
+    }
+  }
+
+  const tableFields = data.fields.filter((f: any) => f.type === "table");
+  for (let i = 0; i < data.data[tableFields[i].property].length; i++) {
+    const table = data.data[tableFields[i].property];
+
+    for (let j = 0; j < table.length; j++) {
+      let empties = 0;
+      let count = 0;
+
+      for (const item of tableFields[i].table) {
+        console.log(item.property, table[j], j);
+        if (table[j][item.property] === undefined || table[j][item.property] === "") empties++;
+        count++;
+      }
+
+      if (empties > 0) return false;
+    }
+
+    if (i === tableFields.length-1) return true;
+  }
+}
+
+
+
+
+// OLD STUFF
 
 export type FieldData = { title: string, section: keyof typeof Section, type: keyof typeof FieldType, property: string };
 export type FieldDataValue = { title: string, section: keyof typeof Section, type: keyof typeof FieldType, property: string, value: object };
 
-interface MyWindow extends Window { _fieldData: { [key: string]: FieldData[]}; }
-declare var window: MyWindow
-
 type Property = (target: object, property: string) => void
 
 export function Field(title: string, section: Section, type: FieldType = FieldType.text) : Property {
-  return function(target: object, property: string) {
-    const className = target.constructor.name;
-    if (window._fieldData === undefined) window._fieldData = {};
-    if (window._fieldData[className] === undefined) window._fieldData[className] = [];
-    //window._fieldData[className].push({ title, section, type, property });
-  }
+  return function(target: object, property: string) {}
 }
 
 export namespace FormData {
   export function getFieldData(className: string) : FieldData[] {
-    return window._fieldData[className];
+    return [];
   }
 
   export function getTitle(data: any, fieldName: string): string {
-    const className = data.constructor.name;
-    return window._fieldData[className].find(i => i.property == fieldName)?.title ?? "";
+    return "";
   }
 
   export function toBaseString(data: any): string {
-    const className = data.constructor.name;
-    const formData: FieldDataValue[] = [];
-
-    for (let item of window._fieldData[className]) {
-      formData.push({
-        ...item,
-        value: data[item.property],
-      });
-    }
-
-    return btoa(encodeURIComponent(JSON.stringify(formData)));
-  }
-
-  export function fromBaseString(base: string): FieldDataValue[] {
-    return JSON.parse(decodeURIComponent(window.atob(base)));
+    return "";
   }
 }

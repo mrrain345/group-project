@@ -2,6 +2,8 @@
   <div class="container">
     <Navbar />
 
+    <div v-if="alert" class="alert alert-danger">Wszystkie pola są wymagane.</div>
+
     <Section section="top">
       <Input name="classNumber" title="Nr grupy dziekańskiej" :data.sync="data"/>
       <Input name="className" title="Nazwa przedmiotu" :data.sync="data"/>
@@ -31,11 +33,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import Navbar from '@/components/Navbar.vue';
 import Input from '@/components/Input.vue';
 import Table from '@/components/Table.vue';
 import Section from '@/components/Section.vue';
+import { parseForm, Data } from '../classes/Field';
 
 @Component({
   components: {
@@ -46,9 +49,17 @@ import Section from '@/components/Section.vue';
   }
 })
 export default class OrganizationDataForm extends Vue {
-  data: any = { data: {}, fields: [] };
+  data: Data = new Data();
+  alert = false;
 
   generate() {
+    if (!parseForm(this.data)) {
+      this.alert = true;
+      setTimeout(() => { this.alert = false}, 3000);
+      scrollTo(0, 0);
+      return;
+    }
+
     const base = btoa(encodeURIComponent(JSON.stringify(this.data)));
     window.open(`/preview/${base}`);
   }

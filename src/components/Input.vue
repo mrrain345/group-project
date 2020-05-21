@@ -18,20 +18,20 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Inject, InjectReactive } from 'vue-property-decorator';
-import { FieldData, Section, FieldType } from '../classes/Field';
+import { FieldData, Section, FieldType, Data, OBJ } from '../classes/Field';
 
 @Component
 export default class Input extends Vue {
   @Prop() name!: string;
-  @Prop({ default: "text" }) type!: string;
+  @Prop({ default: "text" }) type!: keyof typeof FieldType;
   @Prop() title!: string;
-  @Inject({ default: "main" }) section!: string;
+  @Inject({ default: "main" }) section!: keyof typeof Section;
   @Inject({ default: undefined }) table!: string;
-  data: any = { data: {}, fields: [] };
+  data: Data = { data: {}, fields: [] };
   @InjectReactive() index!: number;
 
   created() {
-    this.data = this.$attrs.data;
+    this.data = <any>this.$attrs.data;
 
     if (this.table === undefined) {
       this.data.fields.push({
@@ -39,18 +39,19 @@ export default class Input extends Vue {
         section: this.section,
         type: this.type,
         property: this.name,
+        table: undefined,
       });
 
       this.data.data[this.name] = (this.type == "date") ? new Date().toISOString().split('T')[0] : "";
 
     } else {
-      this.data.fields.find((f: any) => f.property === this.table).table[this.name] = {
+      this.data.fields.find((f) => f.property === this.table)?.table?.push({
         title: this.title,
         type: this.type,
         property: this.name,
-      }
+      });
 
-      this.data.data[this.table][this.index][this.name] = (this.type == "date") ? new Date().toISOString().split('T')[0] : "";
+      (this.data.data[this.table] as OBJ[])[this.index][this.name] = (this.type == "date") ? new Date().toISOString().split('T')[0] : "";
     }
   }
   

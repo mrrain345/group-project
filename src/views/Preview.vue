@@ -3,7 +3,7 @@
     <div class="row section-top">
       <div class="col-8"></div>
       <div class="col-4">
-        <div v-for="(item, id) in getSection('top')" :key="id">
+        <div v-for="(item, item_id) in getSection('top')" :key="item_id">
           <div class="row field">
             <div class="col-12 title">{{ item.title }}</div>
             <div class="col-12 value">{{ getValue(item) }}</div>
@@ -16,7 +16,7 @@
 
     <div class="row">
       <div class="col-12 section-title">
-        <div v-for="(item, id) in getSection('title')" :key="id">
+        <div v-for="(item, item_id) in getSection('title')" :key="item_id">
           <div v-if="fieldType(item, 'text')">
             <div class="row field">
               <div class="col-12 title">{{ getValue(item) }}</div>
@@ -30,7 +30,7 @@
 
     <div class="row section-main">
       <div class="col-12">
-        <div v-for="(item, id) in getSection('main')" :key="id">
+        <div v-for="(item, item_id) in getSection('main')" :key="item_id">
           <div v-if="fieldType(item, 'text')">
             <div class="row field">
               <div class="col-12 title">{{ item.title }}</div>
@@ -45,21 +45,21 @@
             </div>
           </div>
 
-          <div v-if="fieldType(item, 'students')">
+          <div v-if="fieldType(item, 'table')">
             <div class="title">{{ item.title }}:</div>
             <table class="table">
               <thead>
                 <tr>
-                  <th>Imie i Nazwisko</th>
-                  <th>Funkcja 1</th>
-                  <th>Funkcja 2</th>
+                  <th v-for="(table, table_id) in item.table" :key="table_id">
+                    {{ table.title }}
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(student, stud_id) in getStudents(item.value)" :key="stud_id">
-                  <td>{{ student.fullname }}</td>
-                  <td>{{ student.job1 }}</td>
-                  <td>{{ student.job2 }}</td>
+                <tr v-for="(tabitem, tabitem_id) in getValue(item)" :key="tabitem_id">
+                  <td v-for="(table, table_id) in item.table" :key="table_id">
+                    {{ tabitem[table.property] }}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -73,14 +73,14 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue } from 'vue-property-decorator';
 import { Route } from 'vue-router';
-import { FieldDataValue, FieldType, Section } from '@/classes/Field';
+import { FieldDataValue, FieldType, Section, Data, Field } from '@/classes/Field';
 
 type Student = { fullname: string, jon1: string, job2: string };
 
 @Component
 export default class Preview extends Vue{
 
-  data: any = {};
+  data: Data = new Data();
 
   created() {
     const data = this.$route.params.data;
@@ -101,23 +101,12 @@ export default class Preview extends Vue{
     return this.data.fields.filter((f: any) => f.section === section);
   }
 
-  getValue(field: any) {
+  getValue(field: Field) {
     if (field.type === "date") {
-      return this.printDate(this.data.data[field.property]);
+      return (this.data.data[field.property] as string)?.split('-').reverse()?.join('/');
     } else {
       return this.data.data[field.property];
     }
-  }
-
-  getStudents(value: Student[]) : Student[] {
-    if (value == undefined) return [];
-    let students = [...value];
-    students.splice(students.length-1);
-    return students;
-  }
-
-  printDate(value: string) {
-    return value?.split('-').reverse()?.join('/');
   }
 }
 </script>
