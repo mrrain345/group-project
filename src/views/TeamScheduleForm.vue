@@ -2,64 +2,19 @@
   <div class="container">
     <Navbar />
 
-    <div class="form-group row">
-      <label for="classDate" class="col-sm-12 col-form-label">{{ title('classDate') }}</label>
-      <div class="col-sm-12">
-        <input type="date" class="form-control" id="classDate" v-model="data.classDate" />
-      </div>
-    </div>
+    <div v-if="alert" class="alert alert-danger">Wszystkie pola są wymagane.</div>
 
-    <div class="form-group row">
-      <label for="taskNumber" class="col-sm-12 col-form-label">{{ title('taskNumber') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="taskNumber" v-model="data.taskNumber" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="taskTopic" class="col-sm-12 col-form-label">{{ title('taskTopic') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="taskTopic" v-model="data.taskTopic" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="workers" class="col-sm-12 col-form-label">{{ title('workers') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="workers" v-model="data.workers" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="startDate" class="col-sm-12 col-form-label">{{ title('startDate') }}</label>
-      <div class="col-sm-12">
-        <input type="date" class="form-control" id="startDate" v-model="data.startDate" />
-      </div>
-    </div>
+    <Table name="tasks" title="Zadania projektowe" :data.sync="data">
+      <Input name="classDate" title="Data zajęć wg organizacji roku akademickiego" type="date" :data.sync="data"/>
+      <Input name="taskNumber" title="Numer zadania" type="number" :data.sync="data"/>
+      <Input name="taskTopic" title="Temat zadania" :data.sync="data"/>
+      <Input name="workers" title="Osoba (osoby) realizująca - imię i nazwisko" :data.sync="data"/>
+      <Input name="startDate" title="Data rozpoczęcia" type="date" :data.sync="data"/>
+      <Input name="finishDate" title="Data zakończenia" type="date" :data.sync="data"/>
+      <Input name="realizationTime" title="Czas realizacji (w dniach)" type="number" :data.sync="data"/>
+      <Input name="millestones" title="Wyszczególnione millestones" :data.sync="data"/>
+   </Table>
    
-    <div class="form-group row">
-      <label for="finishDate" class="col-sm-12 col-form-label">{{ title('finishDate') }}</label>
-      <div class="col-sm-12">
-        <input type="date" class="form-control" id="finishData" v-model="data.finishDate" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="realizationTime" class="col-sm-12 col-form-label">{{ title('realizationTime') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="realizationTime" v-model="data.realizationTime" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="millestones" class="col-sm-12 col-form-label">{{ title('millestones') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="millestones" v-model="data.millestones" />
-      </div>
-    </div>
-
-    <br/>
-
     <button class="btn btn-primary float-right" style="margin-bottom: 40px;" @click="generate">
       Generuj PDF
     </button>
@@ -68,27 +23,35 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import Navbar from '@/components/Navbar.vue';
-import TeamScheduleData from '@/classes/TeamScheduleData';
-import { FormData } from '@/classes/Field';
+import Input from '@/components/Input.vue';
+import Table from '@/components/Table.vue';
+import Section from '@/components/Section.vue';
+import { parseForm, Data } from '../classes/Field';
 
 @Component({
   components: {
     Navbar,
+    Input,
+    Table,
+    Section,
   }
 })
 export default class TeamScheduleForm extends Vue {
-  data = new TeamScheduleData();
-
+  data: Data = new Data();
+  alert = false;
 
   generate() {
-    const base = FormData.toBaseString(this.data);
-    window.open(`/preview/${base}`);
-  }
+    if (!parseForm(this.data)) {
+      this.alert = true;
+      setTimeout(() => { this.alert = false}, 3000);
+      scrollTo(0, 0);
+      return;
+    }
 
-  title(fieldName: string) : string {
-    return FormData.getTitle(this.data, fieldName);
+    const base = btoa(encodeURIComponent(JSON.stringify(this.data)));
+    window.open(`/preview/${base}`);
   }
 }
 
