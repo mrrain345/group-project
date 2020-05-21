@@ -2,104 +2,56 @@
   <div class="container">
     <Navbar />
 
-    <div class="form-group row">
-      <label for="classDate" class="col-sm-12 col-form-label">{{ title('classDate') }}</label>
-      <div class="col-sm-12">
-        <input type="date" class="form-control" id="classDate" v-model="data.classDate" />
-      </div>
-    </div>
+    <div v-if="alert" class="alert alert-danger">Wszystkie pola są wymagane.</div>
 
-    <div class="form-group row">
-      <label for="plannedDate" class="col-sm-12 col-form-label">{{ title('plannedDate') }}</label>
-      <div class="col-sm-12">
-        <input type="date" class="form-control" id="plannedDate" v-model="data.plannedDate" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="taskNumber" class="col-sm-12 col-form-label">{{ title('taskNumber') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="taskNumber" v-model="data.taskNumber" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="taskName" class="col-sm-12 col-form-label">{{ title('taskName') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="taskName" v-model="data.taskName" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="workers" class="col-sm-12 col-form-label">{{ title('workers') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="workers" v-model="data.workers" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="realisationForm" class="col-sm-12 col-form-label">{{ title('realisationForm') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="realisationForm" v-model="data.realisationForm" />
-      </div>
-    </div>
+    <Table name="tasks" title="Zadania projektowe" :data.sync="data">
+      <Input name="classDate" title="Data zajęć wg organizacji roku akademickiego" type="date" :data.sync="data"/>
+      <Input name="plannedDate" title="Data planowanej realizacji" type="date" :data.sync="data"/>
+      <Input name="taskNumber" title="Nr zadania" type="number" :data.sync="data"/>
+      <Input name="taskName" title="Temat zadania" :data.sync="data"/>
+      <Input name="workers" title="Osoby wykonujące zadanie" :data.sync="data"/>
+      <Input name="realisationForm" title="Forma realizacji" :data.sync="data"/>
+      <Input name="verificationMethod" title="Sposób weryfikacji" :data.sync="data"/>
+      <Input name="resultForwarding" title="Wskazanie sposobu i adresata przekazania wyniku pracy" :data.sync="data"/>
+   </Table>
    
-    <div class="form-group row">
-      <label for="verificationMethod" class="col-sm-12 col-form-label">{{ title('verificationMethod') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="verificationMethod" v-model="data.verificationMethod" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="resultForwarding" class="col-sm-12 col-form-label">{{ title('resultForwarding') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="resultForwarding" v-model="data.resultForwarding" />
-      </div>
-    </div>
-
-    <br/>
-
-    <div class="form-group row float-right">
-      <button class="btn btn-secondary" style="margin-right: 10px;" @click="addData">
-        Dodaj
-      </button>
-
-      <button class="btn btn-primary" @click="generate">
-        Generuj PDF
-      </button>
-    </div>
+    <button class="btn btn-primary float-right" style="margin-bottom: 40px;" @click="generate">
+      Generuj PDF
+    </button>
 
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import Navbar from '@/components/Navbar.vue';
-import ProjectTasksData from '@/classes/ProjectTasksData';
-import { FormData } from '@/classes/Field';
+import Input from '@/components/Input.vue';
+import Table from '@/components/Table.vue';
+import Section from '@/components/Section.vue';
+import { parseForm, Data } from '../classes/Field';
 
 @Component({
   components: {
     Navbar,
+    Input,
+    Table,
+    Section,
   }
 })
 export default class ProjectTasksForm extends Vue {
-  data = new ProjectTasksData();
-  dataTable : Array<ProjectTasksData> = [];
-
-  addData() {
-    const data = JSON.stringify(this.data);
-    this.dataTable.push(JSON.parse(data));
-  }
+  data: Data = new Data();
+  alert = false;
 
   generate() {
-    const base = FormData.toBaseString(this.data);
-    window.open(`/preview/${base}`);
-  }
+    if (!parseForm(this.data)) {
+      this.alert = true;
+      setTimeout(() => { this.alert = false}, 3000);
+      scrollTo(0, 0);
+      return;
+    }
 
-  title(fieldName: string) : string {
-    return FormData.getTitle(this.data, fieldName);
+    const base = btoa(encodeURIComponent(JSON.stringify(this.data)));
+    window.open(`/preview/${base}`);
   }
 }
 
