@@ -2,56 +2,18 @@
   <div class="container">
     <Navbar />
 
-    <div class="form-group row">
-      <label for="classDate" class="col-sm-12 col-form-label">{{ title('classDate') }}</label>
-      <div class="col-sm-12">
-        <input type="date" class="form-control" id="classDate" v-model="data.classDate" />
-      </div>
-    </div>
+    <div v-if="alert" class="alert alert-danger">Wszystkie pola są wymagane.</div>
 
-    <div class="form-group row">
-      <label for="taskNumber" class="col-sm-12 col-form-label">{{ title('taskNumber') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="taskNumber" v-model="data.taskNumber" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="realizationDate" class="col-sm-12 col-form-label">{{ title('realizationDate') }}</label>
-      <div class="col-sm-12">
-        <input type="date" class="form-control" id="realizationDate" v-model="data.realizationDate" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="subject" class="col-sm-12 col-form-label">{{ title('subject') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="subject" v-model="data.subject" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="fullName" class="col-sm-12 col-form-label">{{ title('fullName') }}</label>
-      <div class="col-sm-12">
-        <input type="date" class="form-control" id="fullName" v-model="data.fullName" />
-      </div>
-    </div>
+    <Table name="schedule" title="Harmonogram pracy własnej" :data.sync="data">
+      <Input name="classDate" title="Data zajęć wg organizacji roku akademickiego" type="date" :data.sync="data"/>
+      <Input name="taskNumber" title="Numer zadania projektowego" type="number" :data.sync="data"/>
+      <Input name="realizationDate" title="Data realizacji" type="date" :data.sync="data"/>
+      <Input name="subject" title="Temat zadania projektowego (tytuł)" :data.sync="data"/>
+      <Input name="fullName" title="Imie i nazwisko" :data.sync="data"/>
+      <Input name="fuctions" title="Pełnione funkcje w projekcie" :data.sync="data"/>
+      <Input name="realizationTime" title="Czy zrealizowano w terminie (Tak/Nie jeśli nie wskazanie powodu" :data.sync="data"/>
+   </Table>
    
-    <div class="form-group row">
-      <label for="functions" class="col-sm-12 col-form-label">{{ title('functions') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="functions" v-model="data.functions" />
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="realizationTime" class="col-sm-12 col-form-label">{{ title('realizationTime') }}</label>
-      <div class="col-sm-12">
-        <input type="text" class="form-control" id="realizationTime" v-model="data.realizationTime" />
-      </div>
-    </div>
-    <br/>
-
     <button class="btn btn-primary float-right" style="margin-bottom: 40px;" @click="generate">
       Generuj PDF
     </button>
@@ -60,27 +22,35 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import Navbar from '@/components/Navbar.vue';
-import PersonalScheduleData from '@/classes/PersonalScheduleData';
-import { FormData } from '@/classes/Field';
+import Input from '@/components/Input.vue';
+import Table from '@/components/Table.vue';
+import Section from '@/components/Section.vue';
+import { parseForm, Data } from '../classes/Field';
 
 @Component({
   components: {
     Navbar,
+    Input,
+    Table,
+    Section,
   }
 })
 export default class PersonalScheduleForm extends Vue {
-  data = new PersonalScheduleData();
-
+  data: Data = new Data();
+  alert = false;
 
   generate() {
-    const base = FormData.toBaseString(this.data);
-    window.open(`/preview/${base}`);
-  }
+    if (!parseForm(this.data)) {
+      this.alert = true;
+      setTimeout(() => { this.alert = false}, 3000);
+      scrollTo(0, 0);
+      return;
+    }
 
-  title(fieldName: string) : string {
-    return FormData.getTitle(this.data, fieldName);
+    const base = btoa(encodeURIComponent(JSON.stringify(this.data)));
+    window.open(`/preview/${base}`);
   }
 }
 
