@@ -1,9 +1,9 @@
 <template>
   <div class="nav container">
-    <router-link to="/organization-data">Dane Organizacyjne</router-link>
-    <router-link to="/project-tasks">Zadania Projektowe</router-link>
-    <router-link to="/project-schedule">Harmonogram pracy zespołu</router-link>
-    <router-link to="/personal-schedule">Harmonogram pracy własnej</router-link>
+    <a href="/organization-data" class="nav-link">Dane Organizacyjne</a>
+    <a href="/project-tasks" class="nav-link">Zadania Projektowe</a>
+    <a href="/project-schedule" class="nav-link">Harmonogram pracy zespołu</a>
+    <a href="/personal-schedule" class="nav-link">Harmonogram pracy własnej</a>
   </div> 
 </template>
 
@@ -13,6 +13,14 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 @Component
 export default class Navbar extends Vue {
 
+  mounted() {
+    const navs = document.getElementsByTagName("a");
+    for (let nav of navs) {
+      if (this.$route.path === "/" + nav.href.split("/")[3]) {
+        nav.classList.add("active");
+      }
+    }
+  }
 }
 </script>
 
@@ -33,8 +41,11 @@ export default class Navbar extends Vue {
   border-left: none;
   padding-left: 0;
 }
+.nav a:hover {
+  text-decoration: underline;
+}
 
-.nav a.router-link-exact-active {
+.nav a.active {
   color: #42b983;
 }
 </style>

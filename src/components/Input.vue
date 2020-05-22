@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Inject, InjectReactive } from 'vue-property-decorator';
-import { FieldData, Section, FieldType, Data, OBJ } from '../classes/Field';
+import { Section, FieldType, Data, OBJ } from '../classes/Field';
 
 @Component
 export default class Input extends Vue {

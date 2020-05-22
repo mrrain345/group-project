@@ -73,7 +73,7 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue } from 'vue-property-decorator';
 import { Route } from 'vue-router';
-import { FieldDataValue, FieldType, Section, Data, Field } from '@/classes/Field';
+import { FieldType, Section, Data, Field } from '@/classes/Field';
 
 type Student = { fullname: string, jon1: string, job2: string };
 
@@ -86,15 +86,7 @@ export default class Preview extends Vue{
     const data = this.$route.params.data;
     this.data = JSON.parse(decodeURIComponent(window.atob(data)));
 
-    //window.setTimeout(() => window.print(), 100);
-  }
-
-  fieldType(item: FieldDataValue, type: keyof typeof FieldType) {
-    return item.type === type;
-  }
-
-  sectionType(item: FieldDataValue, section: keyof typeof Section) {
-    return item.section === section;
+    window.setTimeout(() => window.print(), 100);
   }
 
   getSection(section: keyof typeof Section) {

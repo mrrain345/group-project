@@ -61,31 +61,3 @@ export function parseForm(data: any) {
     if (i === tableFields.length-1) return true;
   }
 }
-
-
-
-
-// OLD STUFF
-
-export type FieldData = { title: string, section: keyof typeof Section, type: keyof typeof FieldType, property: string };
-export type FieldDataValue = { title: string, section: keyof typeof Section, type: keyof typeof FieldType, property: string, value: object };
-
-type Property = (target: object, property: string) => void
-
-export function Field(title: string, section: Section, type: FieldType = FieldType.text) : Property {
-  return function(target: object, property: string) {}
-}
-
-export namespace FormData {
-  export function getFieldData(className: string) : FieldData[] {
-    return [];
-  }
-
-  export function getTitle(data: any, fieldName: string): string {
-    return "";
-  }
-
-  export function toBaseString(data: any): string {
-    return "";
-  }
-}
