@@ -4,12 +4,19 @@
 
     <div v-if="alert !== null" class="alert alert-danger">{{ alert }}</div>
 
+    <Section section="top">
+      <Input name="classNumber" title="Nr grupy dziekańskiej" :data.sync="data"/>
+      <Input name="classDate" title="Data zajęć wg organizacji roku akademickiego" type="date" :data.sync="data"/>
+      <Input name="groupName" title="Nazwa grupy projektowej" :data.sync="data"/>
+    </Section>
+
+    <Input name="fullName" title="Imie i nazwisko" :data.sync="data"/>
+
     <Table name="schedule" title="Harmonogram pracy własnej" :data.sync="data">
       <Input name="classDate" title="Data zajęć wg organizacji roku akademickiego" type="date" :data.sync="data"/>
       <Input name="taskNumber" title="Numer zadania projektowego" type="number" :data.sync="data"/>
       <Input name="realizationDate" title="Data realizacji" type="date" :data.sync="data"/>
       <Input name="subject" title="Temat zadania projektowego (tytuł)" :data.sync="data"/>
-      <Input name="fullName" title="Imie i nazwisko" :data.sync="data"/>
       <Input name="fuctions" title="Pełnione funkcje w projekcie" :data.sync="data"/>
       <Input name="realizationTime" title="Czy zrealizowano w terminie (Tak/Nie jeśli nie wskazanie powodu" :data.sync="data"/>
    </Table>
@@ -27,7 +34,7 @@ import Navbar from '@/components/Navbar.vue';
 import Input from '@/components/Input.vue';
 import Table from '@/components/Table.vue';
 import Section from '@/components/Section.vue';
-import { parseForm, Data } from '../classes/Field';
+import { parseForm, Data, setFilename } from '../classes/Field';
 
 @Component({
   components: {
@@ -50,6 +57,8 @@ export default class PersonalScheduleForm extends Vue {
       return;
     }
 
+    this.data.topic = "Harmonogram pracy własnej";
+    setFilename(this.data, ["fullName", "classNumber", "groupName", "classDate"], "harmi");
     const base = btoa(encodeURIComponent(JSON.stringify(this.data)));
     window.open(`/preview/${base}`);
   }

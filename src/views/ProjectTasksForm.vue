@@ -4,6 +4,12 @@
 
     <div v-if="alert !== null" class="alert alert-danger">{{ alert }}</div>
 
+    <Section section="top">
+      <Input name="classNumber" title="Nr grupy dziekańskiej" :data.sync="data"/>
+      <Input name="classDate" title="Data zajęć wg organizacji roku akademickiego" type="date" :data.sync="data"/>
+      <Input name="groupName" title="Nazwa grupy projektowej" :data.sync="data"/>
+    </Section>
+
     <Table name="tasks" title="Zadania projektowe" :data.sync="data">
       <Input name="classDate" title="Data zajęć wg organizacji roku akademickiego" type="date" :data.sync="data"/>
       <Input name="plannedDate" title="Data planowanej realizacji" type="date" :data.sync="data"/>
@@ -28,7 +34,7 @@ import Navbar from '@/components/Navbar.vue';
 import Input from '@/components/Input.vue';
 import Table from '@/components/Table.vue';
 import Section from '@/components/Section.vue';
-import { parseForm, Data } from '../classes/Field';
+import { parseForm, Data, setFilename } from '../classes/Field';
 
 @Component({
   components: {
@@ -51,6 +57,8 @@ export default class ProjectTasksForm extends Vue {
       return;
     }
 
+    this.data.topic = "Zadania projektowe";
+    setFilename(this.data, ["classNumber", "groupName", "classDate"], "zadp");
     const base = btoa(encodeURIComponent(JSON.stringify(this.data)));
     window.open(`/preview/${base}`);
   }

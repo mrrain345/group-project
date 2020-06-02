@@ -27,7 +27,7 @@ export default class Input extends Vue {
   @Prop() title!: string;
   @Inject({ default: "main" }) section!: keyof typeof Section;
   @Inject({ default: undefined }) table!: string;
-  data: Data = { data: {}, fields: [] };
+  data: Data = { data: {}, fields: [], filename: "", topic: ""};
   @InjectReactive() index!: number;
 
   created() {

@@ -8,7 +8,6 @@ export enum FieldType {
 
 export enum Section {
   top,
-  title,
   main,
 }
 
@@ -33,11 +32,38 @@ export type Field = {
 export class Data {
   data: OBJ = {};
   fields: Array<Field> = [];
+  filename: string = "";
+  topic: string = "";
 };
 
 function validateEmail(email: string) {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(email);
+}
+
+function dateToFilename(date: string) {
+  return date.split("-").reverse().join("");
+}
+
+export function setFilename(data: Data, fields: string[], suffix: string) {
+  let name = "";
+  
+  for (const field of fields) {
+    for (let i = 0; i < data.fields.length; i++) {
+      if (data.fields[i].property === field) {
+        const type = data.fields[i].type;
+        if (type === "date") {
+          name = name + dateToFilename(data.data[field] as string) + "_";
+        } else if (type === "text") {
+          name = name + (data.data[field] as string).replace(/ /g, "_") + "_";
+        } else {
+          name = name + data.data[field] + "_";
+        }
+      }
+    }
+  }
+
+  data.filename = name + suffix;
 }
 
 

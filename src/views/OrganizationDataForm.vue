@@ -6,14 +6,12 @@
 
     <Section section="top">
       <Input name="classNumber" title="Nr grupy dziekańskiej" :data.sync="data"/>
-      <Input name="className" title="Nazwa przedmiotu" :data.sync="data"/>
       <Input name="classDate" title="Data zajęć wg organizacji roku akademickiego" type="date" :data.sync="data"/>
       <Input name="groupName" title="Nazwa grupy projektowej" :data.sync="data"/>
     </Section>
 
-    <Section section="title">
-      <Input name="subject" title="Temat projektu" :data.sync="data"/>
-    </Section>
+    <Input name="className" title="Nazwa przedmiotu" :data.sync="data"/>
+    <Input name="subject" title="Temat projektu" :data.sync="data"/>
 
     <Input name="skills" title="Wykaz/opis umiejętności potrzebnych do realizacji projektu" :data.sync="data"/>
 
@@ -38,7 +36,7 @@ import Navbar from '@/components/Navbar.vue';
 import Input from '@/components/Input.vue';
 import Table from '@/components/Table.vue';
 import Section from '@/components/Section.vue';
-import { parseForm, Data } from '../classes/Field';
+import { parseForm, Data, setFilename } from '../classes/Field';
 
 @Component({
   components: {
@@ -61,6 +59,8 @@ export default class OrganizationDataForm extends Vue {
       return;
     }
 
+    this.data.topic = "Dane Organizacyjne";
+    setFilename(this.data, ["classNumber", "groupName", "classDate"], "org");
     const base = btoa(encodeURIComponent(JSON.stringify(this.data)));
     window.open(`/preview/${base}`);
   }

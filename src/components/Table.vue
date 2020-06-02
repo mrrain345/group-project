@@ -13,6 +13,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Provide, ProvideReactive } from 'vue-property-decorator';
+import { Data } from '../classes/Field';
 
 @Component
 export default class Table extends Vue {
@@ -21,7 +22,7 @@ export default class Table extends Vue {
   @ProvideReactive() index = 0;
   @Provide() table!: string;
   @Provide() section = "main";
-  data: any = { data: {}, fields: [] };
+  data: any = { data: {}, fields: [], filename: "", topic: "" };
   length = 1;
 
   constructor() {

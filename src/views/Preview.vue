@@ -16,13 +16,9 @@
 
     <div class="row">
       <div class="col-12 section-title">
-        <div v-for="(item, item_id) in getSection('title')" :key="item_id">
-          <div v-if="fieldType(item, 'text')">
-            <div class="row field">
-              <div class="col-12 title">{{ getValue(item) }}</div>
-            </div>
+          <div class="row field">
+            <div class="col-12 title">{{ data.topic }}</div>
           </div>
-        </div>
       </div>
     </div>
 
@@ -78,7 +74,7 @@ export default class Preview extends Vue{
   created() {
     const data = this.$route.params.data;
     this.data = JSON.parse(decodeURIComponent(window.atob(data)));
-
+    document.title = this.data.filename;
     window.setTimeout(() => window.print(), 100);
   }
 
