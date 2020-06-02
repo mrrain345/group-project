@@ -2,6 +2,8 @@ export enum FieldType {
   text,
   date,
   table,
+  email,
+  number,
 }
 
 export enum Section {
@@ -33,31 +35,47 @@ export class Data {
   fields: Array<Field> = [];
 };
 
+function validateEmail(email: string) {
+  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+}
 
-export function parseForm(data: any) {
+
+export function parseForm(data: Data) : null | string {
   for (const prop in data.data) {
     if (data.data[prop] === "") {
-      return false;
+      return "Wszystkie pola są wymagane";
+    }
+  }
+
+  for (let i = 0; i < data.fields.length; i++) {
+    if (data.fields[i].type === "email") {
+      const email = data.data[data.fields[i].property] as string;
+      if (!validateEmail(email)) return "Niewłaściwy adres email";
     }
   }
 
   const tableFields = data.fields.filter((f: any) => f.type === "table");
-  for (let i = 0; i < data.data[tableFields[i].property].length; i++) {
-    const table = data.data[tableFields[i].property];
+  for (let i = 0; i < (data.data[tableFields[i].property] as ArrayField[]).length; i++) {
+    const table = data.data[tableFields[i].property] as OBJ[];
 
     for (let j = 0; j < table.length; j++) {
       let empties = 0;
       let count = 0;
+      if (tableFields[i].table === undefined) continue;
 
-      for (const item of tableFields[i].table) {
-        console.log(item.property, table[j], j);
-        if (table[j][item.property] === undefined || table[j][item.property] === "") empties++;
+      const tableData = tableFields[i].table;
+      if (tableData === undefined) continue;
+
+      for (const item of tableData) {
+        if ((table[j][item.property] as any) === undefined || (table[j][item.property] === "")) empties++;
         count++;
       }
 
-      if (empties > 0) return false;
+      if (empties > 0) return "Wszystkie pola są wymagane";
     }
 
-    if (i === tableFields.length-1) return true;
+    if (i === tableFields.length-1) return null;
   }
+  return null;
 }

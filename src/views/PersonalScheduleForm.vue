@@ -2,7 +2,7 @@
   <div class="container">
     <Navbar />
 
-    <div v-if="alert" class="alert alert-danger">Wszystkie pola są wymagane.</div>
+    <div v-if="alert !== null" class="alert alert-danger">{{ alert }}</div>
 
     <Table name="schedule" title="Harmonogram pracy własnej" :data.sync="data">
       <Input name="classDate" title="Data zajęć wg organizacji roku akademickiego" type="date" :data.sync="data"/>
@@ -39,12 +39,13 @@ import { parseForm, Data } from '../classes/Field';
 })
 export default class PersonalScheduleForm extends Vue {
   data: Data = new Data();
-  alert = false;
+  alert: string | null = null;
 
   generate() {
-    if (!parseForm(this.data)) {
-      this.alert = true;
-      setTimeout(() => { this.alert = false}, 3000);
+    const alert = parseForm(this.data);
+    if (alert !== null) {
+      this.alert = alert;
+      setTimeout(() => { this.alert = null}, 3000);
       scrollTo(0, 0);
       return;
     }

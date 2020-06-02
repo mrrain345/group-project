@@ -2,7 +2,7 @@
   <div class="container">
     <Navbar />
 
-    <div v-if="alert" class="alert alert-danger">Wszystkie pola są wymagane.</div>
+    <div v-if="alert !== null" class="alert alert-danger">{{ alert }}</div>
 
     <Section section="top">
       <Input name="classNumber" title="Nr grupy dziekańskiej" :data.sync="data"/>
@@ -23,7 +23,7 @@
       <Input name="role" title="Rola/funkcja w zespole (max 2 funkcje dla 1 osoby)" :data.sync="data"/>
     </Table>
 
-    <Input name="email" title="Dane kontaktowe" :data.sync="data"/>
+    <Input name="email" title="Dane kontaktowe" type="email" :data.sync="data"/>
 
     <button class="btn btn-primary float-right" style="margin-bottom: 40px;" @click="generate">
       Generuj PDF
@@ -50,12 +50,13 @@ import { parseForm, Data } from '../classes/Field';
 })
 export default class OrganizationDataForm extends Vue {
   data: Data = new Data();
-  alert = false;
+  alert: string | null = null;
 
   generate() {
-    if (!parseForm(this.data)) {
-      this.alert = true;
-      setTimeout(() => { this.alert = false}, 3000);
+    const alert = parseForm(this.data);
+    if (alert !== null) {
+      this.alert = alert;
+      setTimeout(() => { this.alert = null}, 3000);
       scrollTo(0, 0);
       return;
     }

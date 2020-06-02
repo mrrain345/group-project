@@ -31,14 +31,7 @@
     <div class="row section-main">
       <div class="col-12">
         <div v-for="(item, item_id) in getSection('main')" :key="item_id">
-          <div v-if="fieldType(item, 'text')">
-            <div class="row field">
-              <div class="col-12 title">{{ item.title }}</div>
-              <div class="col-12 value">{{ getValue(item) }}</div>
-            </div>
-          </div>
-
-          <div v-if="fieldType(item, 'date')">
+          <div v-if="!fieldType(item, 'table')">
             <div class="row field">
               <div class="col-12 title">{{ item.title }}</div>
               <div class="col-12 value">{{ getValue(item) }}</div>
@@ -99,6 +92,10 @@ export default class Preview extends Vue{
     } else {
       return this.data.data[field.property];
     }
+  }
+
+  fieldType(field: Field, type: keyof typeof FieldType) {
+    return field.type === type;
   }
 }
 </script>
