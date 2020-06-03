@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <div class="row section-top">
       <div class="col-8"></div>
       <div class="col-4">
